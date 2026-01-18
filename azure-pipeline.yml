@@ -11,10 +11,10 @@ variables:
   appServiceName: 'dotnetwebapp-swanikaent'
   packagePath: '$(System.DefaultWorkingDirectory)'
 
-stages: 
- - stage: Build
+stages:
+  - stage: Build
     displayName: 'Build Stage'
-    jobs: 
+    jobs:
     - job: Build
       displayName: 'Build Job'
       steps:
