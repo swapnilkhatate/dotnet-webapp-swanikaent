@@ -57,21 +57,21 @@ stages:
            ArtifactName: 'drop'
            publishLocation: 'Container'
 
- - stage: Deploy
-   displayName: 'Deploy Stage'
-   dependsOn: Build
-   jobs:
-   - deployment: Deploy
-     displayName: 'Deploy Job'
-     environment: 'production'
-     strategy:
-       runOnce:
-         deploy:
-           steps:
-           - task: AzureWebApp@1
-             displayName: 'Deploy to Azure Web App'
-             inputs:
-               azureSubscription: '$(azuresubscription)'
-               appType: 'webApp'
-               appName: '$(appServiceName)'
-               package: '$(packagePath)/drop'
+  - stage: Deploy
+    displayName: 'Deploy Stage'
+    dependsOn: Build
+    jobs:
+    - deployment: Deploy
+      displayName: 'Deploy Job'
+      environment: 'production'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: AzureWebApp@1
+              displayName: 'Deploy to Azure Web App'
+              inputs:
+                azureSubscription: '$(azuresubscription)'
+                appType: 'webApp'
+                appName: '$(appServiceName)'
+                package: '$(packagePath)/drop'
