@@ -12,7 +12,7 @@ variables:
   packagePath: '$(System.DefaultWorkingDirectory)'
 
 stages: 
- - build:
+ - stage: Build
     displayName: 'Build Stage'
     jobs: 
     - job: Build
@@ -37,41 +37,41 @@ stages:
            arguments: '--configuration $(buildConfiguration)'
 
        - task: DotNetCoreCLI@2
-         displayname: 'Run Unit Tests'
+         displayName: 'Run Unit Tests'
          inputs:
            command: 'test'
            projects: '**/*Tests/*.csproj'
            arguments: '--configuration $(buildConfiguration) --no-build --collect:"Code Coverage"'
 
-        - task: DotNetCoreCLI@2
-          displayName: 'Publish Application'
-          inputs:
-            command: 'publish'
-            projects: '**/*.csproj'
-            arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+       - task: DotNetCoreCLI@2
+         displayName: 'Publish Application'
+         inputs:
+           command: 'publish'
+           projects: '**/*.csproj'
+           arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
 
-        - task: PublishBuildArtifacts@1
-          displayName: 'Publish Artifacts'
-          inputs:
-            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-            ArtifactName: 'drop'
-            publishLocation: 'Container'
+       - task: PublishBuildArtifacts@1
+         displayName: 'Publish Artifacts'
+         inputs:
+           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+           ArtifactName: 'drop'
+           publishLocation: 'Container'
 
-       - stage: Deploy
-         displayName: 'Deploy Stage'
-         dependsOn: Build
-         jobs:
-         - deployment: Deploy
-           displayName: 'Deploy Job'
-           environment: 'production'
-           strategy:
-             runOnce:
-               deploy:
-                 steps:
-                 - task: AzureWebApp@1
-                   displayName: 'Deploy to Azure Web App'
-                   inputs:
-                     azureSubscription: '$(azuresubscription)'
-                     appType: 'webApp'
-                     appName: '$(appServiceName)'
-                     package: '$(packagePath)/drop'
+ - stage: Deploy
+   displayName: 'Deploy Stage'
+   dependsOn: Build
+   jobs:
+   - deployment: Deploy
+     displayName: 'Deploy Job'
+     environment: 'production'
+     strategy:
+       runOnce:
+         deploy:
+           steps:
+           - task: AzureWebApp@1
+             displayName: 'Deploy to Azure Web App'
+             inputs:
+               azureSubscription: '$(azuresubscription)'
+               appType: 'webApp'
+               appName: '$(appServiceName)'
+               package: '$(packagePath)/drop'
